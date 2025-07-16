@@ -5,7 +5,6 @@ import { useGuestbookStats } from '@/components/guestbook/hooks/use-guestbook-st
 import { 
   BookOpen, 
   Users, 
-  Calendar, 
   TrendingUp, 
   Hash, 
   Heart,

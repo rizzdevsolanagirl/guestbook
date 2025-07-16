@@ -12,8 +12,6 @@ import {
   Filter, 
   Plus, 
   Users,
-  Calendar,
-  Hash,
   Sparkles,
   Lightbulb,
   Target,
@@ -54,7 +52,7 @@ const MOOD_OPTIONS = [
 
 export default function GuestbookPage() {
   const { walletAddress } = useCurrentWallet()
-  const { profiles } = useGetProfiles({ walletAddress: walletAddress || '' })
+  const { profiles: _ } = useGetProfiles({ walletAddress: walletAddress || '' })
   const [showForm, setShowForm] = useState(false)
   const [filters, setFilters] = useState({
     cohort: '',
@@ -64,10 +62,11 @@ export default function GuestbookPage() {
   const [page, setPage] = useState(1)
   const pageSize = 10
 
-  const { entries, pagination } = useGuestbookEntries({
-    page,
-    pageSize,
-  })
+  const { entries, pagination, isLoading, error } = useGuestbookEntries({
+    requestingProfileId: _?.[0]?.profile?.id,
+    cohort: filters.cohort || undefined,
+    week: filters.week ? parseInt(filters.week) : undefined,
+    mood: filters.mood || undefined,
 
   const handleFilterChange = (type: 'cohort' | 'week' | 'mood', value: string) => {
     setFilters(prev => ({

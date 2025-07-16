@@ -13,7 +13,6 @@ import {
   Target,
   Lightbulb,
   Trophy,
-  Smile,
   Lock,
   Unlock,
   Zap,

@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { IGuestbookStats } from '@/models/guestbook.models'
 
 // Mock data for guestbook entries (in a real app, this would be stored in a database)
-let guestbookEntries: any[] = []
+const guestbookEntries: any[] = []
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     // Calculate stats from mock data
     const totalEntries = guestbookEntries.length

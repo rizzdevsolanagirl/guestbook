@@ -107,7 +107,7 @@ export function GuestbookEntryForm() {
         mood: 'excited',
         isPublic: true
       })
-    } catch (error) {
+    } catch {
       toast.error('Failed to create guestbook entry')
     }
   }
