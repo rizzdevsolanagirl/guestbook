@@ -1,11 +1,8 @@
 import { PopularTokensTable } from '@/components/token/popular-tokens-table'
 import TokenChartSwapContainer from '@/components/trade/components/token-chart-swap-container'
-import { Avatar } from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent } from '@/components/ui/card'
+import { Card } from '@/components/ui/card'
 import { Button } from '@/components/common/button'
-import { TrendingUp, BookOpen, Users, Calendar, Sparkles, ArrowRight } from 'lucide-react'
-import Image from 'next/image'
+import { TrendingUp, BookOpen, Users, Sparkles, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { Suspense } from 'react'
 

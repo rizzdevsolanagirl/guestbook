@@ -1,13 +1,11 @@
-import { socialfi } from '@/utils/socialfi'
 import { NextRequest, NextResponse } from 'next/server'
 import { ICreateGuestbookEntryRequest } from '@/models/guestbook.models'
 
 // Mock data for guestbook entries (in a real app, this would be stored in a database)
-let guestbookEntries: any[] = []
+const guestbookEntries: any[] = []
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
-  const requestingProfileId = searchParams.get('requestingProfileId')
   const page = parseInt(searchParams.get('page') || '1')
   const pageSize = parseInt(searchParams.get('pageSize') || '10')
   const cohort = searchParams.get('cohort')
@@ -16,7 +14,7 @@ export async function GET(req: NextRequest) {
 
   try {
     // Filter entries based on query parameters
-    let filteredEntries = guestbookEntries.filter(entry => {
+    const filteredEntries = guestbookEntries.filter(entry => {
       if (cohort && entry.entry.cohort !== cohort) return false
       if (week && entry.entry.week !== parseInt(week)) return false
       if (mood && entry.entry.mood !== mood) return false

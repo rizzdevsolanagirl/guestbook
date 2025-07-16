@@ -5,7 +5,6 @@ import { useGuestbookStats } from '@/components/guestbook/hooks/use-guestbook-st
 import { 
   BookOpen, 
   Users, 
-  Calendar, 
   TrendingUp, 
   Hash, 
   Heart,
@@ -85,7 +84,7 @@ export function GuestbookStats() {
         </div>
 
         <div className="text-center p-4 bg-gray-800/50 rounded-lg">
-          <Calendar className="h-8 w-8 mx-auto mb-2 text-green-500" />
+          <BookOpen className="h-8 w-8 mx-auto mb-2 text-green-500" />
           <div className="text-2xl font-bold">{stats.totalWeeks}</div>
           <div className="text-sm text-gray-400">Weeks</div>
         </div>

@@ -11,11 +11,11 @@ import {
   LogIn,
   LogOut,
   Menu,
-  RefreshCw,
   User,
   BookOpen,
   Wallet,
   AlertCircle,
+  TrendingUp,
 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -37,7 +37,7 @@ export function Header() {
   const { profiles } = useGetProfiles({
     walletAddress: walletAddress || '',
   })
-  const { ready, authenticated, logout, user } = usePrivy()
+  const { ready, authenticated, logout } = usePrivy()
   const { login } = useLogin()
   const disableLogin = !ready || (ready && authenticated) || isLoggingOut
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
@@ -179,7 +179,7 @@ export function Header() {
               href="/trade"
               className="flex items-center hover:opacity-80 transition-opacity"
             >
-              <RefreshCw className="h-4 w-4 mr-2" />
+              <TrendingUp className="h-4 w-4 mr-2" />
               <span>Swap</span>
             </Link>
 
