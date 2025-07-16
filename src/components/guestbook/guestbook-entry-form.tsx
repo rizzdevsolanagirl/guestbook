@@ -6,6 +6,7 @@ import { Input } from '@/components/form/input'
 import { useCreateGuestbookEntry } from '@/components/guestbook/hooks/use-create-guestbook-entry'
 import { useCurrentWallet } from '@/components/auth/hooks/use-current-wallet'
 import { useGetProfiles } from '@/components/auth/hooks/use-get-profiles'
+import { SKILL_OPTIONS, INTEREST_OPTIONS, SkillType, InterestType } from '@/models/guestbook.models'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { 
@@ -20,7 +21,9 @@ import {
   Target,
   Lightbulb,
   Trophy,
-  Smile
+  Smile,
+  Zap,
+  Users
 } from 'lucide-react'
 
 const MOOD_OPTIONS = [
@@ -55,6 +58,8 @@ export function GuestbookEntryForm() {
     experience: '',
     highlights: [''],
     tags: [''],
+    skills: [] as SkillType[],
+    interests: [] as InterestType[],
     mood: 'excited' as MoodType,
     isPublic: true
   })
@@ -81,6 +86,8 @@ export function GuestbookEntryForm() {
         experience: formData.experience.trim(),
         highlights: formData.highlights.filter(h => h.trim()),
         tags: formData.tags.filter(t => t.trim()),
+        skills: formData.skills,
+        interests: formData.interests,
         mood: formData.mood,
         isPublic: formData.isPublic
       })
@@ -95,6 +102,8 @@ export function GuestbookEntryForm() {
         experience: '',
         highlights: [''],
         tags: [''],
+        skills: [],
+        interests: [],
         mood: 'excited',
         isPublic: true
       })
@@ -142,6 +151,24 @@ export function GuestbookEntryForm() {
     setFormData(prev => ({
       ...prev,
       tags: prev.tags.map((t, i) => i === index ? value : t)
+    }))
+  }
+
+  const toggleSkill = (skill: SkillType) => {
+    setFormData(prev => ({
+      ...prev,
+      skills: prev.skills.includes(skill)
+        ? prev.skills.filter(s => s !== skill)
+        : [...prev.skills, skill]
+    }))
+  }
+
+  const toggleInterest = (interest: InterestType) => {
+    setFormData(prev => ({
+      ...prev,
+      interests: prev.interests.includes(interest)
+        ? prev.interests.filter(i => i !== interest)
+        : [...prev.interests, interest]
     }))
   }
 
@@ -222,23 +249,71 @@ export function GuestbookEntryForm() {
         <div>
           <label className="block text-sm font-medium mb-2">
             <Target className="h-4 w-4 inline mr-2" />
-            What was your main experience? *
+            Main Experience *
           </label>
           <textarea
             value={formData.experience}
             onChange={(e) => setFormData(prev => ({ ...prev, experience: e.target.value }))}
-            placeholder="Describe your main experience or achievement..."
+            placeholder="What was your main experience or achievement this week?"
             className="w-full p-3 border border-gray-600 rounded-lg bg-gray-800 text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
             rows={3}
             required
           />
         </div>
 
+        {/* Skills */}
+        <div>
+          <label className="block text-sm font-medium mb-2">
+            <Zap className="h-4 w-4 inline mr-2" />
+            Skills & Expertise
+          </label>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+            {SKILL_OPTIONS.map(skill => (
+              <button
+                key={skill}
+                type="button"
+                onClick={() => toggleSkill(skill)}
+                className={`p-2 text-sm rounded-lg border transition-colors ${
+                  formData.skills.includes(skill)
+                    ? 'bg-purple-600 border-purple-500 text-white'
+                    : 'bg-gray-800 border-gray-600 text-gray-300 hover:border-gray-500'
+                }`}
+              >
+                {skill}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Interests */}
+        <div>
+          <label className="block text-sm font-medium mb-2">
+            <Users className="h-4 w-4 inline mr-2" />
+            Communities & Interests
+          </label>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+            {INTEREST_OPTIONS.map(interest => (
+              <button
+                key={interest}
+                type="button"
+                onClick={() => toggleInterest(interest)}
+                className={`p-2 text-sm rounded-lg border transition-colors ${
+                  formData.interests.includes(interest)
+                    ? 'bg-blue-600 border-blue-500 text-white'
+                    : 'bg-gray-800 border-gray-600 text-gray-300 hover:border-gray-500'
+                }`}
+              >
+                {interest}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* Highlights */}
         <div>
           <label className="block text-sm font-medium mb-2">
             <Sparkles className="h-4 w-4 inline mr-2" />
-            Highlights & Key Moments
+            Highlights
           </label>
           <div className="space-y-2">
             {formData.highlights.map((highlight, index) => (
@@ -249,25 +324,23 @@ export function GuestbookEntryForm() {
                   onChange={(e) => updateHighlight(index, e.target.value)}
                   placeholder="Add a highlight..."
                 />
-                {formData.highlights.length > 1 && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={() => removeHighlight(index)}
-                    className="text-red-500 hover:text-red-400"
-                  >
-                    Remove
-                  </Button>
-                )}
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => removeHighlight(index)}
+                  className="text-red-400 hover:text-red-300"
+                >
+                  Remove
+                </Button>
               </div>
             ))}
             <Button
               type="button"
-              variant="ghost"
+              variant="secondary"
               onClick={addHighlight}
-              className="text-purple-500 hover:text-purple-400"
+              className="w-full"
             >
-              + Add Highlight
+              Add Highlight
             </Button>
           </div>
         </div>
@@ -276,7 +349,7 @@ export function GuestbookEntryForm() {
         <div>
           <label className="block text-sm font-medium mb-2">
             <Hash className="h-4 w-4 inline mr-2" />
-            Tags
+            Custom Tags
           </label>
           <div className="space-y-2">
             {formData.tags.map((tag, index) => (
@@ -285,27 +358,25 @@ export function GuestbookEntryForm() {
                   name={`tag-${index}`}
                   value={tag}
                   onChange={(e) => updateTag(index, e.target.value)}
-                  placeholder="Add a tag..."
+                  placeholder="Add a custom tag..."
                 />
-                {formData.tags.length > 1 && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={() => removeTag(index)}
-                    className="text-red-500 hover:text-red-400"
-                  >
-                    Remove
-                  </Button>
-                )}
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => removeTag(index)}
+                  className="text-red-400 hover:text-red-300"
+                >
+                  Remove
+                </Button>
               </div>
             ))}
             <Button
               type="button"
-              variant="ghost"
+              variant="secondary"
               onClick={addTag}
-              className="text-purple-500 hover:text-purple-400"
+              className="w-full"
             >
-              + Add Tag
+              Add Tag
             </Button>
           </div>
         </div>
@@ -314,33 +385,36 @@ export function GuestbookEntryForm() {
         <div>
           <label className="block text-sm font-medium mb-2">
             <Smile className="h-4 w-4 inline mr-2" />
-            How are you feeling about your experience?
+            How are you feeling?
           </label>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
-            {MOOD_OPTIONS.map(({ value, label, icon: Icon, color }) => (
-              <button
-                key={value}
-                type="button"
-                onClick={() => setFormData(prev => ({ ...prev, mood: value }))}
-                className={`p-3 rounded-lg border transition-all ${
-                  formData.mood === value
-                    ? 'border-purple-500 bg-purple-500/20'
-                    : 'border-gray-600 hover:border-gray-500'
-                }`}
-              >
-                <Icon className={`h-6 w-6 mx-auto mb-1 ${color}`} />
-                <span className="text-sm">{label}</span>
-              </button>
-            ))}
+            {MOOD_OPTIONS.map(mood => {
+              const MoodIcon = mood.icon
+              return (
+                <button
+                  key={mood.value}
+                  type="button"
+                  onClick={() => setFormData(prev => ({ ...prev, mood: mood.value }))}
+                  className={`p-3 rounded-lg border transition-colors flex flex-col items-center gap-2 ${
+                    formData.mood === mood.value
+                      ? 'bg-gray-700 border-gray-500'
+                      : 'bg-gray-800 border-gray-600 hover:border-gray-500'
+                  }`}
+                >
+                  <MoodIcon className={`h-5 w-5 ${mood.color}`} />
+                  <span className="text-sm">{mood.label}</span>
+                </button>
+              )
+            })}
           </div>
         </div>
 
         {/* Privacy */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={() => setFormData(prev => ({ ...prev, isPublic: !prev.isPublic }))}
-            className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-800 transition-colors"
+            className="flex items-center gap-2 p-2 rounded-lg border border-gray-600 hover:border-gray-500 transition-colors"
           >
             {formData.isPublic ? (
               <Unlock className="h-4 w-4 text-green-500" />
@@ -353,13 +427,13 @@ export function GuestbookEntryForm() {
           </button>
         </div>
 
-        {/* Submit Button */}
+        {/* Submit */}
         <Button
           type="submit"
           disabled={isLoading}
-          className="w-full bg-purple-600 hover:bg-purple-700 text-white"
+          className="w-full bg-purple-600 hover:bg-purple-700"
         >
-          {isLoading ? 'Creating Entry...' : 'Sign the Guestbook'}
+          {isLoading ? 'Creating Entry...' : 'Sign Guestbook'}
         </Button>
       </form>
     </Card>

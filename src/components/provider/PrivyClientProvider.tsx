@@ -13,7 +13,7 @@ export function PrivyClientProvider({
       appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID || ''}
       config={{
         appearance: { 
-          walletChainType: 'ethereum-and-solana',
+          walletChainType: 'solana-only',
           theme: 'dark',
           accentColor: '#8b5cf6',
           showWalletLoginFirst: true,

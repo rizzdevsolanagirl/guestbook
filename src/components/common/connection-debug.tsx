@@ -112,7 +112,7 @@ export function ConnectionDebug() {
             
             <div className="flex items-center justify-between">
               <span>User Wallet:</span>
-              <span className="text-purple-400 font-mono">
+              <span className="text-purple-400 fonft-mono">
                 {user.wallet?.address ? `${user.wallet.address.slice(0, 6)}...${user.wallet.address.slice(-4)}` : 'None'}
               </span>
             </div>

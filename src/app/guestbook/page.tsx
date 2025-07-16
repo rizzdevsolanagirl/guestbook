@@ -59,13 +59,14 @@ export default function GuestbookPage() {
     week: '',
     mood: ''
   })
+  const [page, setPage] = useState(1)
+  const pageSize = 10
 
   const { entries, pagination, isLoading, error } = useGuestbookEntries({
     requestingProfileId: _?.[0]?.profile?.id,
     cohort: filters.cohort || undefined,
     week: filters.week ? parseInt(filters.week) : undefined,
     mood: filters.mood || undefined,
-  })
 
   const handleFilterChange = (type: 'cohort' | 'week' | 'mood', value: string) => {
     setFilters(prev => ({
@@ -154,17 +155,7 @@ export default function GuestbookPage() {
 
         {/* Entries */}
         <div className="space-y-6">
-          {isLoading ? (
-            <div className="text-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto mb-4"></div>
-              <p className="text-gray-400">Loading guestbook entries...</p>
-            </div>
-          ) : error ? (
-            <div className="text-center py-12">
-              <BookOpen className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-              <p className="text-gray-400">Failed to load guestbook entries</p>
-            </div>
-          ) : entries.length === 0 ? (
+          {entries.length === 0 ? (
             <div className="text-center py-12">
               <BookOpen className="h-12 w-12 mx-auto mb-4 text-gray-400" />
               <p className="text-gray-400 mb-4">No guestbook entries yet</p>
@@ -195,6 +186,7 @@ export default function GuestbookPage() {
               variant="ghost"
               disabled={pagination.page === 1}
               className="px-3 py-2"
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
             >
               Previous
             </Button>
@@ -205,6 +197,7 @@ export default function GuestbookPage() {
               variant="ghost"
               disabled={pagination.page === pagination.totalPages}
               className="px-3 py-2"
+              onClick={() => setPage((p) => Math.min(pagination.totalPages, p + 1))}
             >
               Next
             </Button>

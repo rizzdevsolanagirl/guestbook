@@ -5,6 +5,7 @@
 @import 'tailwindcss/preflight.css' layer(base);
 @import 'tailwindcss/utilities.css' layer(utilities);
 @import 'tw-animate-css';
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Space+Grotesk:wght@400;600;700&family=Dancing+Script:wght@700&display=swap');
 
 @custom-variant dark (&:is(.dark *));
 
@@ -64,6 +65,9 @@
 
 :root {
   --radius: 0.5rem;
+  --font-heading: 'Space Grotesk', 'Inter', Arial, sans-serif;
+  --font-body: 'Inter', Arial, sans-serif;
+  --font-cursive: 'Dancing Script', cursive;
   /* Light theme - keeping original for compatibility */
   --background: oklch(1 0 0);
   --foreground: oklch(0.129 0.042 264.695);
@@ -99,39 +103,29 @@
 }
 
 .dark {
-  /* Dark theme using zinc color scheme for consistency */
-  --background: #09090b; /* zinc-950 */
-  --foreground: #fafafa; /* zinc-50 */
-  --card: #18181b; /* zinc-900 */
-  --card-foreground: #fafafa; /* zinc-50 */
-  --popover: #18181b; /* zinc-900 */
-  --popover-foreground: #fafafa; /* zinc-50 */
-  --primary: #9333ea; /* purple-600 */
-  --primary-foreground: #fafafa; /* zinc-50 */
-  --secondary: #27272a; /* zinc-800 */
-  --secondary-foreground: #fafafa; /* zinc-50 */
-  --muted: #27272a; /* zinc-800 */
-  --muted-foreground: #a1a1aa; /* zinc-400 */
-  --accent: #3f3f46; /* zinc-700 */
-  --accent-foreground: #fafafa; /* zinc-50 */
-  --destructive: #ef4444; /* red-500 */
-  --destructive-foreground: #fafafa; /* zinc-50 */
-  --border: #27272a; /* zinc-800 */
-  --input: #3f3f46; /* zinc-700 */
-  --ring: #9333ea; /* purple-600 */
-  --chart-1: #9333ea; /* purple-600 */
-  --chart-2: #db2777; /* pink-600 */
-  --chart-3: #06b6d4; /* cyan-500 */
-  --chart-4: #10b981; /* emerald-500 */
-  --chart-5: #f59e0b; /* amber-500 */
-  --sidebar: #18181b; /* zinc-900 */
-  --sidebar-foreground: #fafafa; /* zinc-50 */
-  --sidebar-primary: #9333ea; /* purple-600 */
-  --sidebar-primary-foreground: #fafafa; /* zinc-50 */
-  --sidebar-accent: #27272a; /* zinc-800 */
-  --sidebar-accent-foreground: #fafafa; /* zinc-50 */
-  --sidebar-border: #27272a; /* zinc-800 */
-  --sidebar-ring: #9333ea; /* purple-600 */
+  /* Solana dark theme */
+  --background: #18181b;
+  --foreground: #fafafa;
+  --card: #232336;
+  --card-foreground: #fafafa;
+  --popover: #232336;
+  --popover-foreground: #fafafa;
+  --primary: #9945FF; /* Solana Purple */
+  --primary-foreground: #fafafa;
+  --secondary: #14F195; /* Solana Green */
+  --secondary-foreground: #18181b;
+  --muted: #232336;
+  --muted-foreground: #a1a1aa;
+  --accent: #14F195;
+  --accent-foreground: #18181b;
+  --destructive: #ef4444;
+  --destructive-foreground: #fafafa;
+  --border: #232336;
+  --input: #232336;
+  --ring: #9945FF;
+  --solana-purple: #9945FF;
+  --solana-green: #14F195;
+  --solana-gradient: linear-gradient(90deg, #9945FF 0%, #14F195 100%);
 }
 
 @layer base {
@@ -140,6 +134,15 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    position: relative;
+    /* Remove background so only gradient shows */
+    background: none !important;
   }
 }
 
@@ -154,11 +157,13 @@
   }
 
   .button-primary {
-    @apply bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700 transition-all duration-200;
+    @apply text-white transition-all duration-200;
+    background: linear-gradient(90deg, #9945FF 0%, #14F195 100%);
   }
 
   .button-secondary {
-    @apply bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-all duration-200;
+    @apply text-[#18181b] transition-all duration-200;
+    background: #14F195;
   }
 
   .button-ghost {
@@ -168,4 +173,88 @@
   .input-primary {
     @apply bg-input border border-border text-foreground placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring/20;
   }
+
+  .badge-solana-purple {
+    @apply text-white;
+    background: #9945FF;
+  }
+
+  .badge-solana-green {
+    @apply text-[#18181b];
+    background: #14F195;
+  }
+}
+
+/* Cursive accent for hero/brand words */
+.cursive-accent {
+  font-family: var(--font-cursive);
+  font-size: 2.8em;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: #14F195;
+  text-shadow: 0 2px 24px #9945FF55, 0 1px 8px #14F19544;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* Futuristic animated gradient background */
+body::before {
+  content: '';
+  position: fixed;
+  z-index: -1;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(ellipse 80% 60% at 60% 20%, #9945FF88 0%, #14F19544 60%, transparent 100%),
+              linear-gradient(120deg, #18181b 60%, #9945FF22 100%);
+  animation: bg-move 12s ease-in-out infinite alternate;
+  pointer-events: none;
+  filter: blur(12px) brightness(1.05);
+  opacity: 1;
+}
+
+@keyframes bg-move {
+  0% {
+    filter: blur(0px) brightness(1);
+    background-position: 0% 50%, 100% 0%;
+  }
+  100% {
+    filter: blur(2px) brightness(1.1);
+    background-position: 100% 50%, 0% 100%;
+  }
+}
+
+/* Glassmorphism for cards */
+.card-primary, .card-secondary, .glass-card {
+  background: rgba(24, 24, 27, 0.32); /* More transparent glassmorphism */
+  border: 1.5px solid rgba(153, 69, 255, 0.15);
+  box-shadow: 0 8px 32px 0 rgba(20, 241, 149, 0.10);
+  backdrop-filter: blur(16px) saturate(1.2);
+  border-radius: 1.25rem;
+}
+
+/* Futuristic glowing focus for inputs/buttons */
+input:focus, textarea:focus, select:focus, button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #9945FF, 0 0 8px 2px #14F19544;
+  border-color: #9945FF;
+}
+
+/* Headings neon glow */
+h1, h2, h3 {
+  text-shadow: 0 2px 16px #9945FF44, 0 1px 4px #14F19533;
+}
+
+/* Button hover/active glow */
+.button-primary:hover, .button-primary:focus {
+  box-shadow: 0 0 12px 2px #9945FF99, 0 0 24px 4px #14F19555;
+  filter: brightness(1.08);
+}
+.button-secondary:hover, .button-secondary:focus {
+  box-shadow: 0 0 8px 1px #14F19599;
+  filter: brightness(1.08);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  letter-spacing: 0.02em;
 }

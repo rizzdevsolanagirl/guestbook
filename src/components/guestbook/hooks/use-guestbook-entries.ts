@@ -1,58 +1,76 @@
-import { IGuestbookResponse } from '@/models/guestbook.models'
-import useSWR from 'swr'
+import { IGuestbookEntryWithAuthor } from '@/models/guestbook.models'
+import { useCallback, useEffect, useState } from 'react'
 
-interface UseGuestbookEntriesParams {
-  requestingProfileId?: string
-  page?: number
-  pageSize?: number
-  cohort?: string
-  week?: number
-  mood?: string
+const LOCAL_STORAGE_KEY = 'guestbook_entries_v1'
+
+function getEntriesFromStorage(): IGuestbookEntryWithAuthor[] {
+  if (typeof window === 'undefined') return []
+  try {
+    const raw = localStorage.getItem(LOCAL_STORAGE_KEY)
+    if (!raw) return []
+    return JSON.parse(raw)
+  } catch {
+    return []
+  }
 }
 
-interface GuestbookResponseWithPagination extends IGuestbookResponse {
-  totalCount: number
-  totalPages: number
+function saveEntriesToStorage(entries: IGuestbookEntryWithAuthor[]) {
+  if (typeof window === 'undefined') return
+  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(entries))
 }
 
-export function useGuestbookEntries({
-  requestingProfileId,
-  page = 1,
-  pageSize = 10,
-  cohort,
-  week,
-  mood,
-}: UseGuestbookEntriesParams = {}) {
-  const params = new URLSearchParams()
-  
-  if (requestingProfileId) params.append('requestingProfileId', requestingProfileId)
-  if (page) params.append('page', page.toString())
-  if (pageSize) params.append('pageSize', pageSize.toString())
-  if (cohort) params.append('cohort', cohort)
-  if (week) params.append('week', week.toString())
-  if (mood) params.append('mood', mood)
+export function useGuestbookEntries({ page = 1, pageSize = 10 } = {}) {
+  const [entries, setEntries] = useState<IGuestbookEntryWithAuthor[]>([])
+  const [pagination, setPagination] = useState({
+    page: 1,
+    pageSize: 10,
+    totalCount: 0,
+    totalPages: 1,
+  })
 
-  const { data, error, isLoading, mutate } = useSWR<GuestbookResponseWithPagination>(
-    `/api/guestbook?${params.toString()}`,
-    async (url: string) => {
-      const response = await fetch(url)
-      if (!response.ok) {
-        throw new Error('Failed to fetch guestbook entries')
-      }
-      return response.json()
-    }
-  )
+  useEffect(() => {
+    const allEntries = getEntriesFromStorage()
+    setEntries(allEntries)
+    setPagination({
+      page,
+      pageSize,
+      totalCount: allEntries.length,
+      totalPages: Math.max(1, Math.ceil(allEntries.length / pageSize)),
+    })
+  }, [page, pageSize])
+
+  const paginatedEntries = entries.slice((pagination.page - 1) * pagination.pageSize, pagination.page * pagination.pageSize)
+
+  const addEntry = useCallback((entry: IGuestbookEntryWithAuthor) => {
+    setEntries(prev => {
+      const updated = [entry, ...prev]
+      saveEntriesToStorage(updated)
+      setPagination(p => ({
+        ...p,
+        totalCount: updated.length,
+        totalPages: Math.max(1, Math.ceil(updated.length / p.pageSize)),
+      }))
+      return updated
+    })
+  }, [])
+
+  const updateEntries = useCallback((newEntries: IGuestbookEntryWithAuthor[]) => {
+    setEntries(newEntries)
+    saveEntriesToStorage(newEntries)
+    setPagination(p => ({
+      ...p,
+      totalCount: newEntries.length,
+      totalPages: Math.max(1, Math.ceil(newEntries.length / p.pageSize)),
+    }))
+  }, [])
 
   return {
-    entries: data?.entries || [],
-    pagination: {
-      page: data?.page || 1,
-      pageSize: data?.pageSize || 10,
-      totalCount: data?.totalCount || 0,
-      totalPages: data?.totalPages || 0,
-    },
-    isLoading,
-    error,
-    mutate,
+    entries: paginatedEntries,
+    pagination,
+    addEntry,
+    updateEntries,
+    reload: () => setEntries(getEntriesFromStorage()),
   }
-} 
+}
+
+export { getEntriesFromStorage, saveEntriesToStorage } 

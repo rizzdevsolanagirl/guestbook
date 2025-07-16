@@ -12,7 +12,10 @@ import {
   Lightbulb,
   Target,
   Trophy,
-  Smile
+  Smile,
+  Zap,
+  Star,
+  Award
 } from 'lucide-react'
 
 const MOOD_ICONS = {
@@ -84,15 +87,15 @@ export function GuestbookStats() {
         </div>
 
         <div className="text-center p-4 bg-gray-800/50 rounded-lg">
-          <BookOpen className="h-8 w-8 mx-auto mb-2 text-green-500" />
-          <div className="text-2xl font-bold">{stats.totalWeeks}</div>
-          <div className="text-sm text-gray-400">Weeks</div>
+          <Star className="h-8 w-8 mx-auto mb-2 text-yellow-500" />
+          <div className="text-2xl font-bold">{stats.totalKarma}</div>
+          <div className="text-sm text-gray-400">Total Karma</div>
         </div>
 
         <div className="text-center p-4 bg-gray-800/50 rounded-lg">
-          <TrendingUp className="h-8 w-8 mx-auto mb-2 text-orange-500" />
-          <div className="text-2xl font-bold">{stats.recentActivity}</div>
-          <div className="text-sm text-gray-400">Recent Activity</div>
+          <Award className="h-8 w-8 mx-auto mb-2 text-orange-500" />
+          <div className="text-2xl font-bold">{stats.specialBadgeHolders}</div>
+          <div className="text-sm text-gray-400">Helper Badges</div>
         </div>
       </div>
 
@@ -106,20 +109,62 @@ export function GuestbookStats() {
         <div className="text-sm text-gray-400">Most common feeling among builders</div>
       </div>
 
+      {/* Top Skills */}
+      {stats.topSkills && stats.topSkills.length > 0 && (
+        <div className="mb-6">
+          <div className="flex items-center gap-2 mb-3">
+            <Zap className="h-5 w-5 text-purple-500" />
+            <span className="font-medium">Popular Skills</span>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {stats.topSkills.slice(0, 6).map(({ skill, count }) => (
+              <div
+                key={skill}
+                className="px-3 py-1 bg-purple-600/20 border border-purple-500/30 rounded-full text-sm"
+              >
+                <span className="text-purple-400">{skill}</span>
+                <span className="text-gray-400 ml-1">({count})</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Top Interests */}
+      {stats.topInterests && stats.topInterests.length > 0 && (
+        <div className="mb-6">
+          <div className="flex items-center gap-2 mb-3">
+            <Users className="h-5 w-5 text-blue-500" />
+            <span className="font-medium">Popular Communities</span>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {stats.topInterests.slice(0, 6).map(({ interest, count }) => (
+              <div
+                key={interest}
+                className="px-3 py-1 bg-blue-600/20 border border-blue-500/30 rounded-full text-sm"
+              >
+                <span className="text-blue-400">{interest}</span>
+                <span className="text-gray-400 ml-1">({count})</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Top Tags */}
       {stats.topTags.length > 0 && (
         <div>
           <div className="flex items-center gap-2 mb-3">
-            <Hash className="h-5 w-5 text-purple-500" />
+            <Hash className="h-5 w-5 text-green-500" />
             <span className="font-medium">Popular Tags</span>
           </div>
           <div className="flex flex-wrap gap-2">
             {stats.topTags.slice(0, 8).map(({ tag, count }) => (
               <div
                 key={tag}
-                className="px-3 py-1 bg-purple-600/20 border border-purple-500/30 rounded-full text-sm"
+                className="px-3 py-1 bg-green-600/20 border border-green-500/30 rounded-full text-sm"
               >
-                <span className="text-purple-400">{tag}</span>
+                <span className="text-green-400">{tag}</span>
                 <span className="text-gray-400 ml-1">({count})</span>
               </div>
             ))}
