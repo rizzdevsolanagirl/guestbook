@@ -14,7 +14,11 @@ import {
   Lightbulb,
   Trophy,
   Lock,
-  Unlock
+  Unlock,
+  Zap,
+  Users,
+  Star,
+  ThumbsUp
 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -68,12 +72,20 @@ export function GuestbookEntry({ entry }: GuestbookEntryProps) {
             )}
           </Avatar>
           <div>
-            <Link 
-              href={`/${entry.author.username}`}
-              className="font-semibold hover:text-purple-400 transition-colors"
-            >
-              {entry.author.username}
-            </Link>
+            <div className="flex items-center gap-2">
+              <Link 
+                href={`/${entry.author.username}`}
+                className="font-semibold hover:text-purple-400 transition-colors"
+              >
+                {entry.author.username}
+              </Link>
+              {entry.author.hasSpecialBadge && (
+                <Badge className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white text-xs">
+                  <Star className="h-3 w-3 mr-1" />
+                  Helper
+                </Badge>
+              )}
+            </div>
             <div className="flex items-center gap-2 text-sm text-gray-400">
               <Calendar className="h-3 w-3" />
               {formatDistanceToNow(entry.entry.created_at, { addSuffix: true })}
@@ -107,6 +119,40 @@ export function GuestbookEntry({ entry }: GuestbookEntryProps) {
             <span className="text-sm font-medium text-blue-400">Main Experience</span>
           </div>
           <p className="text-sm text-gray-300">{entry.entry.experience}</p>
+        </div>
+      )}
+
+      {/* Skills */}
+      {Array.isArray(entry.entry.skills) && entry.entry.skills.length > 0 && (
+        <div className="mb-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Zap className="h-4 w-4 text-purple-500" />
+            <span className="text-sm font-medium text-purple-400">Skills & Expertise</span>
+          </div>
+          <div className="flex flex-wrap gap-1">
+            {entry.entry.skills.map((skill, index) => (
+              <Badge key={index} variant="secondary" className="text-xs bg-purple-600/20 text-purple-300 border-purple-500/30">
+                {skill}
+              </Badge>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Interests */}
+      {Array.isArray(entry.entry.interests) && entry.entry.interests.length > 0 && (
+        <div className="mb-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Users className="h-4 w-4 text-blue-500" />
+            <span className="text-sm font-medium text-blue-400">Communities & Interests</span>
+          </div>
+          <div className="flex flex-wrap gap-1">
+            {entry.entry.interests.map((interest, index) => (
+              <Badge key={index} variant="secondary" className="text-xs bg-blue-600/20 text-blue-300 border-blue-500/30">
+                {interest}
+              </Badge>
+            ))}
+          </div>
         </div>
       )}
 
@@ -153,6 +199,24 @@ export function GuestbookEntry({ entry }: GuestbookEntryProps) {
         </div>
       </div>
 
+      {/* Karma Info */}
+      {entry.entry.karma > 0 && (
+        <div className="mb-4 p-3 bg-gradient-to-r from-green-900/20 to-blue-900/20 rounded-lg border border-green-500/20">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Star className="h-4 w-4 text-yellow-500" />
+              <span className="text-sm font-medium text-yellow-400">Karma: {entry.entry.karma}</span>
+            </div>
+            {entry.entry.helpfulReplies > 0 && (
+              <div className="flex items-center gap-1">
+                <ThumbsUp className="h-3 w-3 text-green-500" />
+                <span className="text-xs text-green-400">{entry.entry.helpfulReplies} helpful replies</span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Footer */}
       <div className="flex items-center justify-between pt-4 border-t border-gray-700">
         <div className="flex items-center gap-4 text-sm text-gray-400">
@@ -163,6 +227,10 @@ export function GuestbookEntry({ entry }: GuestbookEntryProps) {
           <button className="flex items-center gap-1 hover:text-blue-400 transition-colors">
             <MessageCircle className="h-4 w-4" />
             <span>{entry.socialCounts.commentCount}</span>
+          </button>
+          <button className="flex items-center gap-1 hover:text-green-400 transition-colors">
+            <ThumbsUp className="h-4 w-4" />
+            <span>{entry.socialCounts.upvoteCount}</span>
           </button>
         </div>
         

@@ -6,6 +6,7 @@ import { Input } from '@/components/form/input'
 import { useCreateGuestbookEntry } from '@/components/guestbook/hooks/use-create-guestbook-entry'
 import { useCurrentWallet } from '@/components/auth/hooks/use-current-wallet'
 import { useGetProfiles } from '@/components/auth/hooks/use-get-profiles'
+import { SKILL_OPTIONS, INTEREST_OPTIONS, SkillType, InterestType } from '@/models/guestbook.models'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { 
@@ -20,7 +21,9 @@ import {
   Target,
   Lightbulb,
   Trophy,
-  Smile
+  Smile,
+  Zap,
+  Users
 } from 'lucide-react'
 
 const MOOD_OPTIONS = [
@@ -55,6 +58,8 @@ export function GuestbookEntryForm() {
     experience: '',
     highlights: [''],
     tags: [''],
+    skills: [] as SkillType[],
+    interests: [] as InterestType[],
     mood: 'excited' as MoodType,
     isPublic: true
   })
@@ -81,6 +86,8 @@ export function GuestbookEntryForm() {
         experience: formData.experience.trim(),
         highlights: formData.highlights.filter(h => h.trim()),
         tags: formData.tags.filter(t => t.trim()),
+        skills: formData.skills,
+        interests: formData.interests,
         mood: formData.mood,
         isPublic: formData.isPublic
       })
@@ -95,6 +102,8 @@ export function GuestbookEntryForm() {
         experience: '',
         highlights: [''],
         tags: [''],
+        skills: [],
+        interests: [],
         mood: 'excited',
         isPublic: true
       })
@@ -310,6 +319,68 @@ export function GuestbookEntryForm() {
           </div>
         </div>
 
+        {/* Skills */}
+        <div>
+          <label className="block text-sm font-medium mb-2">
+            <Zap className="h-4 w-4 inline mr-2" />
+            Skills & Expertise
+          </label>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+            {SKILL_OPTIONS.map((skill) => (
+              <button
+                key={skill}
+                type="button"
+                onClick={() => {
+                  setFormData(prev => ({
+                    ...prev,
+                    skills: prev.skills.includes(skill as SkillType)
+                      ? prev.skills.filter(s => s !== skill)
+                      : [...prev.skills, skill as SkillType]
+                  }))
+                }}
+                className={`p-2 rounded-lg border text-sm transition-all ${
+                  formData.skills.includes(skill as SkillType)
+                    ? 'border-purple-500 bg-purple-500/20 text-purple-300'
+                    : 'border-gray-600 hover:border-gray-500 text-gray-300'
+                }`}
+              >
+                {skill}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Interests */}
+        <div>
+          <label className="block text-sm font-medium mb-2">
+            <Users className="h-4 w-4 inline mr-2" />
+            Communities & Interests
+          </label>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+            {INTEREST_OPTIONS.map((interest) => (
+              <button
+                key={interest}
+                type="button"
+                onClick={() => {
+                  setFormData(prev => ({
+                    ...prev,
+                    interests: prev.interests.includes(interest as InterestType)
+                      ? prev.interests.filter(i => i !== interest)
+                      : [...prev.interests, interest as InterestType]
+                  }))
+                }}
+                className={`p-2 rounded-lg border text-sm transition-all ${
+                  formData.interests.includes(interest as InterestType)
+                    ? 'border-blue-500 bg-blue-500/20 text-blue-300'
+                    : 'border-gray-600 hover:border-gray-500 text-gray-300'
+                }`}
+              >
+                {interest}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* Mood */}
         <div>
           <label className="block text-sm font-medium mb-2">
@@ -317,30 +388,30 @@ export function GuestbookEntryForm() {
             How are you feeling about your experience?
           </label>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
-            {MOOD_OPTIONS.map(({ value, label, icon: Icon, color }) => (
+            {MOOD_OPTIONS.map((mood) => (
               <button
-                key={value}
+                key={mood.value}
                 type="button"
-                onClick={() => setFormData(prev => ({ ...prev, mood: value }))}
+                onClick={() => setFormData(prev => ({ ...prev, mood: mood.value }))}
                 className={`p-3 rounded-lg border transition-all ${
-                  formData.mood === value
+                  formData.mood === mood.value
                     ? 'border-purple-500 bg-purple-500/20'
                     : 'border-gray-600 hover:border-gray-500'
                 }`}
               >
-                <Icon className={`h-6 w-6 mx-auto mb-1 ${color}`} />
-                <span className="text-sm">{label}</span>
+                <mood.icon className={`h-6 w-6 mx-auto mb-1 ${mood.color}`} />
+                <span className="text-sm">{mood.label}</span>
               </button>
             ))}
           </div>
         </div>
 
         {/* Privacy */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={() => setFormData(prev => ({ ...prev, isPublic: !prev.isPublic }))}
-            className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-800 transition-colors"
+            className="flex items-center gap-2 p-2 rounded-lg border border-gray-600 hover:border-gray-500 transition-colors"
           >
             {formData.isPublic ? (
               <Unlock className="h-4 w-4 text-green-500" />
@@ -353,13 +424,13 @@ export function GuestbookEntryForm() {
           </button>
         </div>
 
-        {/* Submit Button */}
+        {/* Submit */}
         <Button
           type="submit"
           disabled={isLoading}
-          className="w-full bg-purple-600 hover:bg-purple-700 text-white"
+          className="w-full bg-purple-600 hover:bg-purple-700"
         >
-          {isLoading ? 'Creating Entry...' : 'Sign the Guestbook'}
+          {isLoading ? 'Creating Entry...' : 'Sign Guestbook'}
         </Button>
       </form>
     </Card>
